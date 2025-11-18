@@ -50,13 +50,13 @@ if __name__ == "__main__":
                     time.sleep(0.001)
                     if t>duration_time:
                         break   
-            elif choice == "2"
-                print("Impedence mode")            
+            elif choice == "2":
+                print("Impedence mode")         
             elif choice == "3":
                 motor3.set_zero()
                 motor4.set_zero()
                 print("Motor set to zero point.")
-            elif choice == "4"
+            elif choice == "4":
                 motor3.position_control(0, 30)
                 motor4.position_control(0, 30)
                 print("Joint set to zero.")                     
