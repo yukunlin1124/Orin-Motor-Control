@@ -162,3 +162,5 @@ Finally you can **launch all the tests** with the following command:
 ```bash
 $ ctest
 ```
+## 5. My scripts
+located in src/myactuator_example/scripts
