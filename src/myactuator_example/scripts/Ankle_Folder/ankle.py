@@ -26,4 +26,5 @@ class Ankle:
         th1 = atan(A1/B1)-asin(C1/sqrt(A1**2+B1**2))
         th2 = atan(A2/B2)-asin(C2/sqrt(A2**2+B2**2))
         return th1,th2
-
+    def FK(self):
+        pass
