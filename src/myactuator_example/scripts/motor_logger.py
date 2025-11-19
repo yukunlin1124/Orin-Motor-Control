@@ -11,12 +11,12 @@ class MotorFeedbackLogger:
             with open(self.filename, mode="w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow([
-                    "timestamp",
+                    "time (s)",
                     "motor_id",
-                    "position_deg",
-                    "velocity_rpm",
-                    "current_A",
-                    "temperature_C"
+                    "position (deg)",
+                    "velocity (rpm)",
+                    "current (A)",
+                    "temperature(C)"
                 ])
 
     def log(self, motor_id, position, velocity, current, temperature):
