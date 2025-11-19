@@ -17,7 +17,7 @@ class Ankle:
         P_c2 = (rot_y(th_p)@rot_x(th_r)@(self.__P0_c2[:, np.newaxis])).flatten()
         A1 = 2*self.__l_bar1*(P_c1[0]-self.__P0_a1[0])
         B1 = 2*self.__l_bar1*(P_c1[2]-self.__P0_a1[2])
-        C1 = P_c1[0]**2+self.__P0_a1[0]**2+P_c1[1]**2+self.__P0_a1[1]**2+P_c1[2]**2+self.__P0_a1[2]**2+self.__l_bar1**2-self.__l_rod1**2-2*(P_c1[2]*self.__P0_a1[2]+P_c1[1]*self.__P0_a1[1]+P_c1[2]*self.__P0_a1[2])
+        C1 = P_c1[0]**2+self.__P0_a1[0]**2+P_c1[1]**2+self.__P0_a1[1]**2+P_c1[2]**2+self.__P0_a1[2]**2+self.__l_bar1**2-self.__l_rod1**2-2*(P_c1[0]*self.__P0_a1[0]+P_c1[1]*self.__P0_a1[1]+P_c1[2]*self.__P0_a1[2])
     
         A2 = 2*self.__l_bar2*(P_c2[0]-self.__P0_a2[0])
         B2 = 2*self.__l_bar2*(P_c2[2]-self.__P0_a2[2])
