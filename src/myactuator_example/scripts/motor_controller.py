@@ -104,7 +104,6 @@ class MotorController:
         time.sleep(1)
         self.driver = rmd.CanDriver(self.can_port)
         self.actuator = rmd.ActuatorInterface(self.driver, self.motor_id)
-        
     # ============================================================
     # MOTOR STATUS
     # ============================================================
@@ -135,3 +134,16 @@ class MotorController:
         Phase B Current: {status3.current_phase_b}A
         Phase C Current: {status3.current_phase_c}A
         """)
+    # ============================================================
+    # READ FEEDBACK VALUES
+    # ============================================================
+    def read_feedback(self):
+        """Return motor feedback in a dict."""
+        s2 = self.actuator.getMotorStatus2()
+
+        return {
+            "temperature": s2.temperature,
+            "current": s2.current,
+            "velocity": s2.shaft_speed,      # RPM
+            "position": s2.position,         # deg
+        }    
