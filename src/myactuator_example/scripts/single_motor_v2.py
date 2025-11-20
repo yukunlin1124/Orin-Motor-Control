@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import time
 from motor_controller import MotorController
 from CMD_Folder import sine
@@ -19,16 +20,21 @@ if __name__ == "__main__":
     motor_cmd = 0.0
     sine_count = 0
     rate_count = 0
-    duration_time = 5  # seconds
-    sine_mid_q = 10
+    duration_time = 10  # seconds
+    sine_mid_q = 60
 
     motor = MotorController(can_port="can2", motor_id=3, torque_constant=2)
-    logger = MotorFeedbackLogger(filename="motor3_feedback.csv")
+    log_directory = os.path.join(os.path.dirname(__file__), "Datas")
+    logger = MotorFeedbackLogger(
+        file_path=log_directory,
+        file_name="test6",
+        duration_time=duration_time
+    )
     motor.set_zero()
     motion_time = 0.0
 
     # Print status
-    print(motion_time)
+    print("motion_time = ", motion_time)
     print("motor status")
     motor.get_motor_status2()
 
@@ -54,8 +60,8 @@ if __name__ == "__main__":
                     motor_cmd = jointLinearInterpolation(q_init, sine_mid_q, rate)
                 
                 # last, do sine wave
-                freq_hz = 1
-                amplitude = 30
+                freq_hz = 5
+                amplitude = 90
                 t = dt*sine_count
                 if( motion_time >= 400 and motion_time < duration_time/dt):
                     sine_count += 1
@@ -64,7 +70,8 @@ if __name__ == "__main__":
 
                 if( motion_time >= duration_time/dt):
                     motor.stop()
-                    motor.shutdown()   
+                    motor.shutdown()
+                    break   
 
                 """
                 cmd.motorCmd[d['FR_0']].q = qDes[0]
@@ -74,8 +81,11 @@ if __name__ == "__main__":
                 cmd.motorCmd[d['FR_0']].tau = -0.65
                 """
 
-            if(motion_time > 10):
+            # safety shutdown after 30 seconds
+            if(motion_time > 30/dt):
+                motor.stop()
                 motor.shutdown()
+                break
 
             motor.position_control(motor_cmd, 120)
             
@@ -97,4 +107,3 @@ if __name__ == "__main__":
         print("\nExiting interactive control...")
         motor.stop()
         motor.shutdown()
-

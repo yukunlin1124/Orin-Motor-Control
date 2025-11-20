@@ -4,7 +4,7 @@ import math
 from motor_controller import MotorController
 from CMD_Folder.sine import SineCommand
 from CMD_Folder.poly345 import Poly345Command
-from Ankle_Folder import ankle
+from Ankle.ankle import Ankle
 
 def jointLinearInterpolation(initPos, targetPos, rate):
 

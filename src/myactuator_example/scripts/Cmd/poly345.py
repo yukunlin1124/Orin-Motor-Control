@@ -1,7 +1,7 @@
 import math
 from .base import CommandGenerator
 
-class Poly345Command(CommandGenerator):
+class Poly345Cmd(CommandGenerator):
     def __init__(self, amplitude1, amplitude2, period):
         self.A1 = amplitude1
         self.A2 = amplitude2

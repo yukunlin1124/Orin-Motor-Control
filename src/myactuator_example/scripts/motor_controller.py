@@ -141,9 +141,11 @@ class MotorController:
         """Return motor feedback in a dict."""
         s2 = self.actuator.getMotorStatus2()
 
+        position = self.actuator.getMultiTurnAngle()
+
         return {
             "temperature": s2.temperature,
             "current": s2.current,
             "velocity": s2.shaft_speed,      # RPM
-            "position": s2.position,         # deg
+            "position": float(position),
         }    
