@@ -7,7 +7,7 @@ class MotorController:
     def __init__(self, 
                  can_port="can0",
                  motor_id=1,
-                 torque_constant=0):             # Nm per Amp (example)
+                 torque_constant=1):             # Nm per Amp (example)
         """
         Motor controller wrapper for MyActuator motors.
 
@@ -19,8 +19,6 @@ class MotorController:
             Motor CAN ID.
         torque_constant : float
             Motor torque constant (Nm/A).
-        position_control_velocity : float
-            Velocity (RPM) used automatically for absolute position control.
         """
 
         # -------- store attributes --------
@@ -101,11 +99,11 @@ class MotorController:
     def set_zero(self):
         """Set current multi-turn position as zero."""
         self.actuator.setCurrentPositionAsEncoderZero()
+        self.actuator.shutdownMotor()
         self.actuator.reset()
         time.sleep(1)
         self.driver = rmd.CanDriver(self.can_port)
         self.actuator = rmd.ActuatorInterface(self.driver, self.motor_id)
-        
     # ============================================================
     # MOTOR STATUS
     # ============================================================
@@ -136,3 +134,16 @@ class MotorController:
         Phase B Current: {status3.current_phase_b}A
         Phase C Current: {status3.current_phase_c}A
         """)
+    # ============================================================
+    # READ FEEDBACK VALUES
+    # ============================================================
+    def read_feedback(self):
+        """Return motor feedback in a dict."""
+        s2 = self.actuator.getMotorStatus2()
+
+        return {
+            "temperature": s2.temperature,
+            "current": s2.current,
+            "velocity": s2.shaft_speed,      # RPM
+            "position": s2.position,         # deg
+        }    

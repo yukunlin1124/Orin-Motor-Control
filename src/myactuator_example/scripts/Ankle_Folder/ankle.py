@@ -1,6 +1,23 @@
 import numpy as np
-from .rot_mat import rot_x,rot_y
-from math import atan,asin,sqrt
+from math import sin,cos,atan,asin,sqrt
+
+def rot_x(th):
+    c = cos(th)
+    s = sin(th)
+    mat = np.array([[1,0,0],
+                    [0,c,-s],
+                    [0,s,c]])
+    return (mat)
+
+def rot_y(th):
+    c = cos(th)
+    s = sin(th)
+    mat = np.array([[c,0,s],
+                    [0,1,0],
+                    [-s,0,c]])
+    return (mat)
+
+
 class Ankle:
     def __init__(self):
         self.__P0_a1 = np.array([0,-50.25,165])
@@ -26,4 +43,5 @@ class Ankle:
         th1 = atan(A1/B1)-asin(C1/sqrt(A1**2+B1**2))
         th2 = atan(A2/B2)-asin(C2/sqrt(A2**2+B2**2))
         return th1,th2
-
+    def FK(self):
+        pass

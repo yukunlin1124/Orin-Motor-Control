@@ -4,6 +4,7 @@ from motor_controller import MotorController
 from CMD_Folder import sine
 import numpy as np
 import math
+from motor_logger import MotorFeedbackLogger
 
 def jointLinearInterpolation(initPos, targetPos, rate):
 
@@ -22,6 +23,7 @@ if __name__ == "__main__":
     sine_mid_q = 10
 
     motor = MotorController(can_port="can2", motor_id=3, torque_constant=2)
+    logger = MotorFeedbackLogger(filename="motor3_feedback.csv")
     motor.set_zero()
     motion_time = 0.0
 
@@ -75,10 +77,21 @@ if __name__ == "__main__":
             if(motion_time > 10):
                 motor.shutdown()
 
-            motor.position_control(motor_cmd, 120) 
+            motor.position_control(motor_cmd, 120)
             
             # debug print
-            #print(f"motion_time: {motion_time} s")  
+            #print(f"motion_time: {motion_time} s")
+            
+            # logger 
+            fb = motor.read_feedback()
+
+            logger.log(
+                motor_id=motor.motor_id,
+                position=fb["position"],
+                velocity=fb["velocity"],
+                current=fb["current"],
+                temperature=fb["temperature"]
+            ) 
 
     except KeyboardInterrupt:
         print("\nExiting interactive control...")
