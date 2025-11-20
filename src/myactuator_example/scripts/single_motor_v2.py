@@ -19,7 +19,7 @@ if __name__ == "__main__":
     sine_count = 0
     rate_count = 0
     duration_time = 5  # seconds
-    sine_mid_q = 30
+    sine_mid_q = 10
 
     motor = MotorController(can_port="can2", motor_id=3, torque_constant=2)
     motor.set_zero()

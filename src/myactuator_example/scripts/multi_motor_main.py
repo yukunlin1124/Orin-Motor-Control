@@ -23,10 +23,10 @@ if __name__ == "__main__":
     duration_time = 5
 
     # Initialize Command
-    ankle_p_cmd = Poly345Command(20, -20, 5)
-    ankle_r_cmd = Poly345Command(5, -5, 5)
-    knee_cmd = Poly345Command(-10, 90, 5)
-    hip_p_cmd = Poly345Command(-30, 30, 5)
+    ankle_p_cmd = Poly345Command(-35, 35, 2)
+    ankle_r_cmd = Poly345Command(1, -1, 2)
+    knee_cmd = Poly345Command(100, -10, 2)
+    hip_p_cmd = Poly345Command(-40, 40, 2)
     
     print("Entering interactive motor control loop. Press Ctrl+C to exit.\n")
 
