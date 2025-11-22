@@ -1,0 +1,3 @@
+*.csv
+*.pyc
+# ignore above file while pushing
