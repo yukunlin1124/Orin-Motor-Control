@@ -37,7 +37,7 @@ if __name__ == "__main__":
     motor3 = MotorController(can_port="can2", motor_id=3, torque_constant=2)
     motors = [motor1, motor2, motor3]
 
-    log_file_base = "test2"
+    log_file_base = "test3"
     log_filenames = [f"{log_file_base}_motor{i+1}.csv" for i in range(len(motors))]
     log_directory = os.path.join(os.path.dirname(__file__), "Datas")
     logger = MotorFeedbackLogger(
