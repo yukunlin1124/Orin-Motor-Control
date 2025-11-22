@@ -1,33 +1,33 @@
 # -*- coding: utf-8 -*-
 import time
-import math
+import numpy as np
 from motor_controller import MotorController
-from CMD_Folder.sine import SineCommand
-from CMD_Folder.poly345 import Poly345Command
+from Cmd.poly345 import Poly345Cmd
 from Ankle.ankle import Ankle
+
 
 def jointLinearInterpolation(initPos, targetPos, rate):
 
     rate = np.fmin(np.fmax(rate, 0.0), 1.0)
-    p = initPos*(1-rate) + targetPos*rate
+    p = initPos * (1 - rate) + targetPos * rate
     return p
-   
+
+
 if __name__ == "__main__":
 
     motor1 = MotorController(can_port="can2", motor_id=1, torque_constant=1.5)
     motor2 = MotorController(can_port="can2", motor_id=2, torque_constant=1.5)
     motor3 = MotorController(can_port="can2", motor_id=3, torque_constant=2)
     motor4 = MotorController(can_port="can2", motor_id=4, torque_constant=2)
-    ankle_left = ankle.Ankle()
-    dtr = math.pi/180
+    ankle_left = Ankle()
     duration_time = 5
 
     # Initialize Command
-    ankle_p_cmd = Poly345Command(-35, 35, 2)
-    ankle_r_cmd = Poly345Command(1, -1, 2)
-    knee_cmd = Poly345Command(100, -10, 2)
-    hip_p_cmd = Poly345Command(-40, 40, 2)
-    
+    ankle_p_cmd = Poly345Cmd(-35, 35, 2)
+    ankle_r_cmd = Poly345Cmd(1, -1, 2)
+    knee_cmd = Poly345Cmd(100, -10, 2)
+    hip_p_cmd = Poly345Cmd(-40, 40, 2)
+
     print("Entering interactive motor control loop. Press Ctrl+C to exit.\n")
 
     try:
@@ -58,28 +58,30 @@ if __name__ == "__main__":
                 print("Absolute position mode")
                 velocity_rpm = float(input("Enter velocity (RPM): "))
                 t0 = time.monotonic()
-                while True:           
+                while True:
                     t = time.monotonic() - t0
 
                     # For debugging: print command values
-                    #ankle_p_cmd.print(t)
-                    #ankle_r_cmd.print(t)
-                    #knee_cmd.print(t)
-                    #hip_p_cmd.print(t)  
+                    # ankle_p_cmd.print(t)
+                    # ankle_r_cmd.print(t)
+                    # knee_cmd.print(t)
+                    # hip_p_cmd.print(t)
 
-                    motor1_cmd,motor2_cmd = ankle_left.IK(ankle_p_cmd.get(t)*dtr,ankle_r_cmd.get(t)*dtr)
+                    motor1_cmd, motor2_cmd = ankle_left.IK_deg(
+                        ankle_p_cmd.get(t), ankle_r_cmd.get(t)
+                    )
                     motor3_cmd = knee_cmd.get(t)
-                    motor4_cmd = hip_p_cmd.get(t)               
-                    motor1.position_control(motor1_cmd/dtr, velocity_rpm)
-                    motor2.position_control(-motor2_cmd/dtr, velocity_rpm) # Negative sign for motor2
+                    motor4_cmd = hip_p_cmd.get(t)
+                    motor1.position_control(motor1_cmd, velocity_rpm)
+                    motor2.position_control(motor2_cmd, velocity_rpm)
                     motor3.position_control(motor3_cmd, velocity_rpm)
                     motor4.position_control(motor4_cmd, velocity_rpm)
                     time.sleep(0.002)
 
-                    if t>duration_time:
-                        break   
+                    if t > duration_time:
+                        break
             elif choice == "2":
-                print("Impedence mode")         
+                print("Impedence mode")
             elif choice == "3":
                 motor1.set_zero()
                 motor2.set_zero()
@@ -87,12 +89,12 @@ if __name__ == "__main__":
                 motor4.set_zero()
                 print("Motor set to zero point.")
             elif choice == "4":
-                motor1_cmd, motor2_cmd = ankle_left.IK(0, 0)
-                motor1.position_control(motor1_cmd/dtr, 30)
-                motor2.position_control(-motor2_cmd/dtr, 30)
+                motor1_cmd, motor2_cmd = ankle_left.IK_deg(0, 0)
+                motor1.position_control(motor1_cmd, 30)
+                motor2.position_control(motor2_cmd, 30)
                 motor3.position_control(0, 30)
                 motor4.position_control(0, 30)
-                print("Move joint to zero point.")                     
+                print("Move joint to zero point.")
             elif choice == "5":
                 motor1.stop()
                 motor2.stop()

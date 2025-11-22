@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 import time
 from motor_controller import MotorController
-from CMD_Folder import sine
 
 if __name__ == "__main__":
     motor = MotorController(can_port="can2", motor_id=3, torque_constant=2)
-
+    current_mode = "none"
     print("Setting current position as zero...")
     motor.set_zero()
 
     # cmd_value = sine.SineCommand(30, 0.1)
-    
+
     print("Entering interactive motor control loop. Press Ctrl+C to exit.\n")
 
     try:
@@ -33,18 +32,18 @@ if __name__ == "__main__":
                 current_mode = "position"
                 velocity_rpm = float(input("Enter velocity (RPM): "))
                 t0 = time.monotonic()
-                while True:              
+                while True:
                     t = time.monotonic() - t0
                     # cmd = cmd_value.get(t)
                     cmd_value = float(input("Enter target position (deg): "))
                     motor.position_control(cmd_value, velocity_rpm)
                     time.sleep(0.001)
-                    if t>10:
-                        break        
+                    if t > 10:
+                        break
             elif choice == "2":
                 current_mode = "velocity"
                 cmd_value = float(input("Enter velocity (RPM): "))
-                motor3.velocity_control(cmd_value)
+                motor.velocity_control(cmd_value)
             elif choice == "3":
                 current_mode = "torque"
                 cmd_value = float(input("Enter torque (A): "))
@@ -72,4 +71,3 @@ if __name__ == "__main__":
         print("\nExiting interactive control...")
         motor.stop()
         motor.shutdown()
-

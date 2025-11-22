@@ -2,16 +2,17 @@
 import os
 import time
 from motor_controller import MotorController
-from CMD_Folder import sine
 import numpy as np
 import math
 from motor_logger import MotorFeedbackLogger
 
+
 def jointLinearInterpolation(initPos, targetPos, rate):
 
     rate = np.fmin(np.fmax(rate, 0.0), 1.0)
-    p = initPos*(1-rate) + targetPos*rate
+    p = initPos * (1 - rate) + targetPos * rate
     return p
+
 
 if __name__ == "__main__":
 
@@ -26,9 +27,7 @@ if __name__ == "__main__":
     motor = MotorController(can_port="can2", motor_id=3, torque_constant=2)
     log_directory = os.path.join(os.path.dirname(__file__), "Datas")
     logger = MotorFeedbackLogger(
-        file_path=log_directory,
-        file_name="test6",
-        duration_time=duration_time
+        file_path=log_directory, file_name="test6", duration_time=duration_time
     )
     motor.set_zero()
     motion_time = 0.0
@@ -39,39 +38,42 @@ if __name__ == "__main__":
     motor.get_motor_status2()
 
     # User prompt
-    print("WARNING: Please ensure there are no obstacles around the robot while running this example.")
+    print(
+        "WARNING: Please ensure there are no obstacles around the robot while running this example."
+    )
     input("Press Enter to continue...")
 
     try:
         while True:
             time.sleep(0.002)
+
             motion_time += 1
 
-            if( motion_time >= 0):
+            if motion_time >= 0:
 
                 # first, get record initial position
-                if( motion_time >= 0 and motion_time < 10):
+                if motion_time >= 0 and motion_time < 10:
                     motor_cmd = q_init
 
                 # second, move to the origin point of a sine movement
-                if( motion_time >= 10 and motion_time < 400):
+                if motion_time >= 10 and motion_time < 400:
                     rate_count += 1
-                    rate = rate_count/200.0 # needs count to 200
+                    rate = rate_count / 200.0  # needs count to 200
                     motor_cmd = jointLinearInterpolation(q_init, sine_mid_q, rate)
-                
+
                 # last, do sine wave
                 freq_hz = 5
                 amplitude = 90
-                t = dt*sine_count
-                if( motion_time >= 400 and motion_time < duration_time/dt):
+                t = dt * sine_count
+                if motion_time >= 400 and motion_time < duration_time / dt:
                     sine_count += 1
-                    sin_cmd = amplitude * math.sin(t*freq_hz) + sine_mid_q
+                    sin_cmd = amplitude * math.sin(t * freq_hz) + sine_mid_q
                     motor_cmd = sin_cmd
 
-                if( motion_time >= duration_time/dt):
+                if motion_time >= duration_time / dt:
                     motor.stop()
                     motor.shutdown()
-                    break   
+                    break
 
                 """
                 cmd.motorCmd[d['FR_0']].q = qDes[0]
@@ -82,17 +84,17 @@ if __name__ == "__main__":
                 """
 
             # safety shutdown after 30 seconds
-            if(motion_time > 30/dt):
+            if motion_time > 30 / dt:
                 motor.stop()
                 motor.shutdown()
                 break
 
             motor.position_control(motor_cmd, 120)
-            
+
             # debug print
-            #print(f"motion_time: {motion_time} s")
-            
-            # logger 
+            # print(f"motion_time: {motion_time} s")
+
+            # logger
             fb = motor.read_feedback()
 
             logger.log(
@@ -100,8 +102,8 @@ if __name__ == "__main__":
                 position=fb["position"],
                 velocity=fb["velocity"],
                 current=fb["current"],
-                temperature=fb["temperature"]
-            ) 
+                temperature=fb["temperature"],
+            )
 
     except KeyboardInterrupt:
         print("\nExiting interactive control...")
